@@ -1,38 +1,3 @@
-// import java.io.*;
-// import java.util.*;
-//
-// public class Legesystem {
-//   Lenkeliste<Legemiddel> legemiddelliste;
-//   Lenkeliste<Resept> reseptliste;
-//   SortertLenkeliste<Lege> legeliste;
-//   Lenkeliste<Pasient> pasientliste;
-//
-  // public void lesFraFiL(File fil) throws FileNotFoundException {
-  //   Scanner in = new Scanner(fil);
-  //   Scanner in2 = new Scanner(fil);
-  //   while (in.hasNextLine()) {
-  //     String linje = in.nextLine();
-  //     if (linje.split(" ")[1] == "Pasienter") {
-  //       while (in2.nextLine().split(" ")[0] != "#") {
-  //         linje = in2.nextLine();
-  //         String navn = linje.split(" ")[0];
-  //         String foedselsnr = linje.split(" ")[1];
-  //         Pasient pasient = new Pasient(navn, foedselsnr);
-  //         pasientliste.leggTil(pasient);
-        // if (linje.split(" ")[1] == "Legemidler") {
-        //   while (in2.nextLine().split(" ")[0] != "#") {
-        //     linje = in2.nextLine();
-        //     navn = linje.split(" ")[0];
-        //     foedselsnr = linje.split(" ")[1];
-        //     pasient = new Pasient(navn, foedselsnr);
-        //     pasientliste.leggTil(pasient);
-        //   }
-        // }
-  //       }
-  //     }
-  //   }
-  // }
-
 import java.io.*;
 import java.util.*;
 import java.lang.*;
@@ -44,43 +9,6 @@ public class Legesystem {
   static Lenkeliste<Pasient> pasientliste = new Lenkeliste<Pasient>();
 
   public static void main(String[] args) throws Exception {
-    try {
-      File fil = new File("inndata.txt");
-      Scanner in3 = new Scanner(fil);
-      Scanner in2 = new Scanner(fil);
-      while (in3.hasNextLine()) {
-        String[] linje = in3.nextLine().split(" ");
-        // System.out.println(in3.nextLine());
-        if (linje[0].equals("#")) {
-
-          if (linje[1].equals("Pasienter")) {
-            String[] nesteLinje = in3.nextLine().split(",");
-            while (!(nesteLinje[0].charAt(0) == '#')) {
-              Pasient pasient = new Pasient(nesteLinje[0], nesteLinje[1]);
-              pasientliste.leggTil(pasient);
-              nesteLinje = in3.nextLine().split(",");
-            }
-          }
-
-          if (linje[1].equals("Leger")) {
-            String[] nesteLinje = in3.nextLine().split(",");
-            while (!(nesteLinje[0].charAt(0) == '#')) {
-              if (!(nesteLinje[1].equals("0"))) {
-                String spesialistIDStr = nesteLinje[1].trim();
-                int spesialistID = Integer.parseInt(spesialistIDStr);
-                Lege spesialist = new Spesialist(nesteLinje[0], spesialistID);
-                legeliste.leggTil(spesialist);
-              } else {
-                Lege lege = new Lege(nesteLinje[0]);
-                legeliste.leggTil(lege);
-              }
-              nesteLinje = in3.nextLine().split(",");
-            }
-          }
-        }
-      }
-    } catch (Exception exception) {System.out.println(exception);}
-
     Scanner in = new Scanner(System.in);
     System.out.println("Starter legesystem.");
     System.out.print(".");
@@ -179,7 +107,7 @@ public class Legesystem {
     Scanner in = new Scanner(System.in);
     String navn;
     System.out.println("Du har valgt aa legge til en lege. Vennligst oppgi legens navn.");
-    navn = in.next();
+    navn = in.nextLine();
     Lege nyLege = new Lege(navn);
     legeliste.leggTil(nyLege);
     System.out.println("Legen " + nyLege.hentNavn() + " er lagt inn i systemet!");
@@ -285,7 +213,7 @@ public class Legesystem {
     }
   }
 
-  static void brukResept() {
+  static void brukResept() throws Exception {
     Scanner in = new Scanner(System.in);
 
     System.out.println("Hvilken pasient vil du se resepter for?");
@@ -293,23 +221,29 @@ public class Legesystem {
     int pasnr = Integer.parseInt(in.next());
     Pasient pasient = pasientliste.hent(pasnr);
 
-    System.out.println("Valgt pasient: " + pasient + ".");
-    System.out.println("Angi ID-nr. på resepten du vil bruke.");
-    pasient.skrivResepter();
-    int reseptID = Integer.parseInt(in.next());
+    System.out.println("\nValgt pasient: " + pasient + ".");
+    if (pasient.hentReseptListe().stoerrelse() == 0) {
+      System.out.println("Pasienten " + pasient  + " har ingen gyldige resepter.");
+      Thread.sleep(1000);
+    }
+    else {
+      System.out.println("Angi ID-nr. paa resepten du vil bruke.");
+      pasient.skrivResepter();
+      int reseptID = Integer.parseInt(in.next());
 
-    /*
-      Resept-IDen stemmer overense med reseptens indeks i reseptlisten, fordi
-      reseptene i listen er sortert fra lavest ID-nr. til hoeyest ID-nr.
-    */
-    Resept resept = reseptliste.hent(reseptID);
-    boolean brukt = resept.bruk(); //metoden returnerer false hvis ingen reit igjen
-    if (!brukt) {
-      System.out.println("Kunne ikke bruke resept på " + resept.hentLegemiddel() +
-      " (ingen gjenvaerende reit).");
-    } else {
-      System.out.println("Brukte resept paa " + resept.hentLegemiddel() +
-      ". Antall gjenvaerende reit: " + resept.hentReit() + ".");
+      /*
+        Resept-IDen stemmer overense med reseptens indeks i reseptlisten, fordi
+        reseptene i listen er sortert fra lavest ID-nr. til hoeyest ID-nr.
+      */
+      Resept resept = reseptliste.hent(reseptID);
+      boolean brukt = resept.bruk(); //metoden returnerer false hvis ingen reit igjen
+      if (!brukt) {
+        System.out.println("Kunne ikke bruke resept pa " + resept.hentLegemiddel().hentNavn() +
+        " (ingen gjenvaerende reit).");
+      } else {
+        System.out.println("Brukte resept paa " + resept.hentLegemiddel().hentNavn() +
+        ". Antall gjenvaerende reit: " + resept.hentReit() + ".");
+      }
     }
   }
 
@@ -328,13 +262,13 @@ public class Legesystem {
       String svar = in.next();
 
       if (svar.equals("0")) {
-        int sumNarkotisk = 0;
+        int sumVanedannende = 0;
 
         for (Lege l : legeliste) {
-          sumNarkotisk += l.antVanedannendeResepter();
+          sumVanedannende += l.antVanedannendeResepter();
         }
 
-        System.out.println("Det er blitt skrevet ut " + sumNarkotisk + " resepter paa vanedannnde legemidler.");
+        System.out.println("Det er blitt skrevet ut " + sumVanedannende + " resept(er) paa vanedannnde legemidler.");
       }
 
       if (svar.equals("1")) {
@@ -342,9 +276,10 @@ public class Legesystem {
 
         for (Lege l : legeliste) {
           sumNarkotisk += l.antNarkResepter();
+
         }
 
-        System.out.println("Det er blitt skrevet ut " + sumNarkotisk + " resepter paa narkotiske legemidler.");
+        System.out.println("Det er blitt skrevet ut " + sumNarkotisk + " resept(er) paa narkotiske legemidler.");
       }
 
       if (svar.equals("2")) {
@@ -353,7 +288,7 @@ public class Legesystem {
         }
         for (Lege l : legeliste) {
           if (l.harNark()) {
-            System.out.println(l.hentNavn() + " har skrevet ut " + l.antNarkResepter() + " resepter paa narkotiske legemidler");
+            System.out.println(l.hentNavn() + " har skrevet ut " + l.antNarkResepter() + " resept(er) paa narkotiske legemidler");
           }
         }
       }
@@ -364,13 +299,69 @@ public class Legesystem {
         }
         for (Pasient p : pasientliste) {
           if (p.harNark()) {
-            System.out.println(p.hentNavn() + " har " + p.antNarkResepter() + " antall gyldige resepter paa narkotiske legemidler.");
+            System.out.println(p.hentNavn() + " har " + p.antNarkResepter() + " antall gyldige resept(er) paa narkotiske legemidler.");
           }
         }
       }
 
       if (svar.equals("4")) {
         avslutte = true;
+      }
+    }
+  }
+
+  static void lesPasienter(File filobjekt) throws FileNotFoundException {
+    Scanner in = new Scanner(filobjekt);
+    while (in.hasNextLine()) {
+      String[] linje = in.nextLine().split(" ");
+      if (linje[0].equals("#")) {
+        if (linje[1].equals("Pasienter")) {
+          String[] nesteLinje = in.nextLine().split(",");
+          while (!(nesteLinje[0].charAt(0) == '#')) {
+            Pasient pasient = new Pasient(nesteLinje[0], nesteLinje[1]);
+            pasientliste.leggTil(pasient);
+            nesteLinje = in.nextLine().split(",");
+          }
+        }
+      }
+    }
+  }
+
+  static void lesLegemidler(File filobjekt) throws FileNotFoundException {
+    Scanner in = new Scanner(filobjekt);
+    while (in.hasNextLine()) {
+      String[] linje = in.nextLine().split(" ");
+      if (linje[0].equals("#")) {
+        if (linje[1].equals("Legemidler")) {
+          String[] nesteLinje = in.nextLine().split(",");
+          while (!(nesteLinje[0].charAt(0) == '#')) {
+            Legemiddel legemiddel;
+            String navn = nesteLinje[0].trim();
+            double pris = Double.parseDouble(nesteLinje[2].trim());
+            double virkestoff = Double.parseDouble(nesteLinje[3].trim());
+
+            if (nesteLinje[1].trim().equals("c") || nesteLinje[1].trim().equals("vanlig")) {
+              legemiddel = new Vanlig(navn, pris, virkestoff);
+              legemiddelliste.leggTil(legemiddel);
+            } else {
+              int styrke = Integer.parseInt(nesteLinje[4].trim());
+
+              if (nesteLinje[1].trim().equals("b") || nesteLinje[1].trim().equals("vanedannende")) {
+                legemiddel = new Vanedannende(navn, pris, virkestoff, styrke);
+                legemiddelliste.leggTil(legemiddel);
+              }
+
+              else if (nesteLinje[1].trim().equals("a") || nesteLinje[1].trim().equals("narkotisk")) {
+                legemiddel = new Narkotisk(navn, pris, virkestoff, styrke);
+                legemiddelliste.leggTil(legemiddel);
+              }
+
+              else {}
+            }
+
+            nesteLinje = in.nextLine().split(",");
+          }
+        }
       }
     }
   }

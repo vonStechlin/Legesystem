@@ -1,4 +1,4 @@
-abstract class Resept {
+abstract class Resept implements Comparable<Resept> {
 
   private Legemiddel legemiddel;
   private Lege utskrivendeLege;
@@ -54,8 +54,14 @@ abstract class Resept {
 
   @Override
   public String toString() {
-    String str = "Klasse: " + getClass().getName() + "\nID: " + unikId + "\nFarge: " + farge() + "\nLegemiddel: " +
-    legemiddel.legemiddeltype() + "\nUtskrivende lege: " + utskrivendeLege.hentNavn() + "\nPasient-ID: " + pasientId + "\nAntall reit: " + reit;
+    String str = getClass().getName() + "(ID: " + unikId + ", farge: " + farge() + ", legemiddel: " +
+    legemiddel.legemiddeltype() + ", utskrivende lege: " + utskrivendeLege.hentNavn() + ", pasient-ID: " + pasientId + ", antall reit: " + reit + ").";
     return str;
+  }
+
+  public int compareTo(Resept annen) {
+    if ((unikId - annen.hentId()) > 0) return 1;
+    if ((unikId - annen.hentId()) < 0) return -1;
+    return 0;
   }
 }
