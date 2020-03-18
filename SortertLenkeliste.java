@@ -50,11 +50,16 @@ public class SortertLenkeliste<T extends Comparable<T>> extends Lenkeliste<T> {
     Node midl = start;
 
     while (teller < str && !funnet) {
+      // System.out.println(x);
       if (hent(teller).compareTo(x) > 0) { //hvis listeverdien er stoerre enn parameterverdien
-        nesteNode = hentNode(teller);
-        forrigeNode = hentNode((teller - 1));
-        nyNode.neste = nesteNode;
-        funnet = true;
+        try {
+          nesteNode = hentNode(teller);
+          forrigeNode = hentNode((teller - 1));
+          nyNode.neste = nesteNode;
+          funnet = true;
+        } catch (UgyldigListeIndeks u) {
+          forrigeNode = null;
+        }
       }
       else {
         teller++;

@@ -14,11 +14,11 @@ public class Lenkeliste<T> implements Liste<T>, Iterable<T> {
     protected Node neste;
   }
 
-  public Iterator iterator() {
+  public Iterator<T> iterator() {
     return new LenkelisteIterator();
   }
 
-  class LenkelisteIterator implements Iterator {
+  class LenkelisteIterator implements Iterator<T> {
     private Node posisjon;
     private Node forrige;
     private boolean etterNext;
@@ -30,11 +30,13 @@ public class Lenkeliste<T> implements Liste<T>, Iterable<T> {
       etterNext = false;
     }
 
+    @Override
     public T next() {
       if (!hasNext()) { throw new NoSuchElementException(); }
       forrige = posisjon; //remember for remove??
       etterNext = true;
 
+      // System.out.println("\nDEBUG hva er posisjon? " + posisjon);
       if (posisjon == null) {
         posisjon = start;
       }
@@ -42,6 +44,7 @@ public class Lenkeliste<T> implements Liste<T>, Iterable<T> {
         posisjon = posisjon.neste;
       }
 
+      // System.out.println("DEBUG posisjon.data =  " + posisjon.data);
       return posisjon.data;
     }
 
@@ -49,6 +52,7 @@ public class Lenkeliste<T> implements Liste<T>, Iterable<T> {
       Tester hvorvidt det er et element etter posisjonen til iteratoren.
       @return true hvis det er et element etter posisjonen til iteratoren
     */
+    @Override
     public boolean hasNext() {
       // hvis iteratoren ennaa ikke har begynt aa iterere: er det et foerste element?
       if (posisjon == null) { return start != null; }
@@ -100,7 +104,9 @@ public class Lenkeliste<T> implements Liste<T>, Iterable<T> {
     @param pos lenkeliste-indeks
     @return node paa en gitt indeks i lenkelisten
   */
-  protected Node hentNode(int pos) {
+  protected Node hentNode(int pos) throws UgyldigListeIndeks {
+    if (pos >= stoerrelse() || pos < 0) { return null; }
+
     Node midl = start;
 
     for (int i = 0; i < pos; i++) {
@@ -108,6 +114,7 @@ public class Lenkeliste<T> implements Liste<T>, Iterable<T> {
     }
 
     return midl;
+
   }
 
   /**
