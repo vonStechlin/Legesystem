@@ -1,13 +1,18 @@
-class BlaaResept extends Resept{
-  // utfyller fargemetoden
-  public BlaaResept(Legemiddel dopRef, Lege legeRef, Pasient pasientRef, int reit){
-    super(dopRef, legeRef, pasientRef, reit);
-    farge = "blaa";
+public class BlaaResept extends Resept {
+
+  private double pris;
+
+  public BlaaResept(Legemiddel l, Lege u, Pasient pasient, int r) {
+    super(l, u, pasient, r);
+    pris = 10;
   }
-  public String farge(){
-    return farge;
+
+  public String farge() {
+    String str = "Dette er en blaa resept!";
+    return str;
   }
-  public Double prisAaBetale(){
-    return (legemiddelRef.hentPris()*0.25);
+
+  public double prisAaBetale() {
+    return pris;
   }
 }

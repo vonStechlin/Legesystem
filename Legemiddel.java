@@ -1,45 +1,46 @@
-import java.util.ArrayList;
+abstract class Legemiddel {
 
-class Legemiddel{
-  // lager en static variabel for aa telle nye instanser og gi ut ID.
-  private static int idRegister = 0;
-  // lager instansvariabler for navn, pris og virkestoff og ID.
   private String navn;
-  private Double pris;
-  private Double virkestoff;
-  private int id;
+  private double pris;
+  private double virkestoff;
+  private int unikId;
+  private static int idTeller;
 
-  // konstruktør for å ta inn verdier til instansvariablene
-  public Legemiddel(String n, Double p, Double v) {
+  public Legemiddel(String n, double p, double v) {
     navn = n;
     pris = p;
     virkestoff = v;
-    idRegister++;
-    id = idRegister;
-  }
-  // offentlige metoder
-  public int hentId(){
-    return id;
+    unikId = idTeller;
+    idTeller++;
   }
 
-  public String hentNavn(){
+  public int hentId() {
+    return unikId;
+  }
+
+  public double hentPris() {
+    return pris;
+  }
+
+  public double hentVirkestoff() {
+    return virkestoff;
+  }
+
+  public void settNyPris(double nyPris) {
+    pris = nyPris;
+  }
+
+  public String hentNavn() {
     return navn;
   }
 
-  public Double hentPris(){
-    return pris;
-  }
-
-  public Double hentVirkestoff(){
-    return virkestoff;
-  }
-  public Double settNyPris(Double nyPris){
-    pris = nyPris;
-    return pris;
+  public String legemiddeltype() { //en metode for aa gjoere toString()-metodene i de andre klassene mer lesbare
+    return getClass().getName();
   }
 
   @Override
-  public String toString(){
-    return navn + ", pris: " + pris + " kr, virkestoff: " + virkestoff + ", id: " + id;
+  public String toString() {
+    String str = "Klasse: " + getClass().getName() + "\nID: " + unikId + "\nPris: " + pris + "\nVirkestoff i ml: " + virkestoff;
+    return str;
   }
 }

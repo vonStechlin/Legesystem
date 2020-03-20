@@ -1,11 +1,13 @@
-class Narkotisk extends Legemiddel{
-  int styrke;
-  public Narkotisk(String n, Double p, Double v, int s){
+class Narkotisk extends Legemiddel {
+
+  private int styrke;
+
+  public Narkotisk(String n, double p, double v, int s) {
     super(n, p, v);
     styrke = s;
   }
 
-  public int hentNarkotiskStyrke(){
+  public int hentNarkotiskStyrke() {
     return styrke;
   }
 }

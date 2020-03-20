@@ -17,5 +17,8 @@ public class Pasient {
     return unikID;
   }
 
+  public String hentNavnOgFdn(){
+    return navn + "," + foedselsnr;
+  }
 
 }
